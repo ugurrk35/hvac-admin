@@ -23,6 +23,8 @@ export interface  OrderItemEdit  {
   productDiscountTotal?: number
   productImageUrl?: string
   variantSnapshot?: string
+  productCampaignPackageId?: number
+  campaignSnapshotJson?: string
 }
 export interface OrderEdit {
   id: number

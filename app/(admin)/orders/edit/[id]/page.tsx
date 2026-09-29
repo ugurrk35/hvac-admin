@@ -87,6 +87,14 @@ const allowedNextStatusIds: Record<number, number[]> = {
   6: [],
 }
 
+function CampaignSnapshotDetails({ value }: { value?: string }) {
+  if (!value) return null
+  try {
+    const snapshot = JSON.parse(value) as { title?: string; city?: string; district?: string; addressLine?: string; preferredDate?: string; photos?: string[]; selections?: { groupLabel?: string; optionLabel?: string }[] }
+    return <div className="mt-5 rounded-lg border border-emerald-200 bg-emerald-50 p-4"><p className="text-sm font-semibold text-emerald-900">Kampanya ve montaj bilgileri</p><div className="mt-2 grid gap-1 text-sm text-emerald-950"><span><b>Paket:</b> {snapshot.title || "Kampanyalı satın alma"}</span><span><b>Lokasyon:</b> {[snapshot.city, snapshot.district].filter(Boolean).join(" / ") || "-"}</span>{snapshot.addressLine && <span><b>Adres:</b> {snapshot.addressLine}</span>}{snapshot.preferredDate && <span><b>Tercih edilen tarih:</b> {new Date(`${snapshot.preferredDate}T00:00:00`).toLocaleDateString("tr-TR")}</span>}{snapshot.selections?.length ? <span><b>Seçimler:</b> {snapshot.selections.map((selection) => `${selection.groupLabel}: ${selection.optionLabel}`).join(" · ")}</span> : null}{snapshot.photos?.length ? <span><b>Cihaz fotoğrafları:</b> {snapshot.photos.map((photo) => <a className="ml-2 underline" href={toProductImageUrl(photo)} key={photo} target="_blank" rel="noreferrer">Aç</a>)}</span> : null}</div></div>
+  } catch { return null }
+}
+
 
 
 
@@ -414,6 +422,7 @@ export default function OrderDetailPage() {
                               <p className="mt-1 whitespace-pre-wrap text-sm text-amber-950">{item.variantSnapshot}</p>
                             </div>
                           ) : null}
+                          <CampaignSnapshotDetails value={item.campaignSnapshotJson} />
                         </div>
                       </div>
                     </div>

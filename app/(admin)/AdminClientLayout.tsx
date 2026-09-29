@@ -22,6 +22,7 @@ import {
   ListTree,
   Truck,
   UserRound,
+  BarChart3,
 } from "lucide-react"
 import { FileText, Mail } from "lucide-react"
 
@@ -87,6 +88,11 @@ const menuItems = [
     title: "Montaj Paketleri",
     href: "/settings/product-campaigns",
     icon: Package,
+  },
+  {
+    title: "Kampanya Analitiği",
+    href: "/settings/product-campaign-analytics",
+    icon: BarChart3,
   },
   {
     title: "Shopping Carts",
