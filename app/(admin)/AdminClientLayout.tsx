@@ -84,6 +84,11 @@ const menuItems = [
     icon: Tags,
   },
   {
+    title: "Montaj Paketleri",
+    href: "/settings/product-campaigns",
+    icon: Package,
+  },
+  {
     title: "Shopping Carts",
     href: "/shopping-carts",
     icon: ShoppingCart,
