@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus, Save, Trash2 } from "lucide-react";
+import { Plus, Save, Sparkles, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
@@ -28,8 +28,6 @@ type Location = {
 };
 type Package = {
   id: number;
-  productId: number;
-  productName: string;
   title: string;
   description: string;
   startingPrice: number;
@@ -39,9 +37,7 @@ type Package = {
   locations: Location[];
   groups: Group[];
 };
-type Product = { id: number; name: string; sku: string };
-const empty = (): Omit<Package, "id" | "productName"> => ({
-  productId: 0,
+const empty = (): Omit<Package, "id"> => ({
   title: "Kampanyalı satın al",
   description:
     "Montaj ve proje kapsamını seçin; kampanyalı toplamı anında görün.",
@@ -60,26 +56,47 @@ const empty = (): Omit<Package, "id" | "productName"> => ({
   ],
 });
 
+const combiChangePreset = (): Pick<Package, "title" | "description" | "requiresExistingDevicePhoto" | "locations" | "groups"> => ({
+  title: "Standart Kombi Değişimi",
+  description: "Mevcut cihaz ve montaj ihtiyaçlarını seçin; her kalemin fiyat etkisini canlı olarak görün.",
+  requiresExistingDevicePhoto: true,
+  locations: [
+    { city: "İstanbul", priceAdjustment: 0 },
+    { city: "Kocaeli", priceAdjustment: 2000 },
+    { city: "Rize", priceAdjustment: 7500 },
+  ],
+  groups: [
+    { code: "kombi_durumu", label: "Kombi durumu", isRequired: true, options: [{ label: "Eski Kombim Alınsın", priceAdjustment: -2500, isDefault: false }, { label: "Eski Kombim Alınmasın", priceAdjustment: 0, isDefault: true }] },
+    { code: "montaj_hizmeti", label: "Montaj hizmeti", isRequired: true, options: [{ label: "Montaj Dahil Olsun", priceAdjustment: 5000, isDefault: false }] },
+    { code: "montaj_malzemesi", label: "Montaj malzemesi", isRequired: false, options: [{ label: "Montaj Malzemesi İstiyorum", priceAdjustment: 1750, isDefault: false }, { label: "Montaj Malzemesi İstemiyorum", priceAdjustment: 0, isDefault: true }] },
+    { code: "yogusma_gideri", label: "Yoğuşma gideri", isRequired: false, options: [{ label: "Yoğuşma Gideri Yapılsın", priceAdjustment: 650, isDefault: false }, { label: "Yoğuşma Gideri Yapılmasın", priceAdjustment: 0, isDefault: true }] },
+    { code: "projelendirme", label: "Projelendirme hizmeti", isRequired: false, options: [{ label: "Yeni Proje Çizilsin", priceAdjustment: 5500, isDefault: false }, { label: "Değişim Projesi Çizilsin", priceAdjustment: 4500, isDefault: false }, { label: "Proje İstemiyorum", priceAdjustment: 0, isDefault: true }] },
+    { code: "sayac_montaji", label: "Sayaç montajı", isRequired: false, options: [{ label: "Sayaç Temini ve Montajı", priceAdjustment: 1750, isDefault: false }, { label: "Sayaç Montajı İstemiyorum", priceAdjustment: 0, isDefault: true }] },
+    { code: "flex_montaji", label: "Flex ve montajı", isRequired: false, options: [{ label: "Ocak Flexi ve Montajı", priceAdjustment: 400, isDefault: false }, { label: "Flex İstemiyorum", priceAdjustment: 0, isDefault: true }] },
+    { code: "kombi_dolabi", label: "Kombi dolabı ve montajı", isRequired: false, options: [{ label: "Kombi Dolabı ve Montajı", priceAdjustment: 3000, isDefault: false }, { label: "Kombi Dolabı İstemiyorum", priceAdjustment: 0, isDefault: true }] },
+    { code: "ek_baca", label: "Ek baca", isRequired: false, options: [{ label: "50 cm Ek Baca 1 Adet ve Montajı", priceAdjustment: 1200, isDefault: false }, { label: "50 cm Ek Baca 2 Adet ve Montajı", priceAdjustment: 2200, isDefault: false }, { label: "50 cm Ek Baca 3 Adet ve Montajı", priceAdjustment: 3300, isDefault: false }, { label: "50 cm Ek Baca 4 Adet ve Montajı", priceAdjustment: 4300, isDefault: false }, { label: "100 cm Ek Baca 1 Adet ve Montajı", priceAdjustment: 1600, isDefault: false }, { label: "100 cm Ek Baca 2 Adet ve Montajı", priceAdjustment: 3000, isDefault: false }, { label: "100 cm Ek Baca 3 Adet ve Montajı", priceAdjustment: 4500, isDefault: false }, { label: "100 cm Ek Baca 4 Adet ve Montajı", priceAdjustment: 5500, isDefault: false }, { label: "Ek Baca İstemiyorum", priceAdjustment: 0, isDefault: true }] },
+    { code: "ek_dirsek", label: "Ek dirsek", isRequired: false, options: [{ label: "Dirsek 45 1 Adet ve Montajı", priceAdjustment: 1500, isDefault: false }, { label: "Dirsek 45 2 Adet ve Montajı", priceAdjustment: 2800, isDefault: false }, { label: "Dirsek 45 3 Adet ve Montajı", priceAdjustment: 4200, isDefault: false }, { label: "Dirsek 90 1 Adet ve Montajı", priceAdjustment: 1500, isDefault: false }, { label: "Dirsek 90 2 Adet ve Montajı", priceAdjustment: 2800, isDefault: false }, { label: "Dirsek 90 3 Adet ve Montajı", priceAdjustment: 4200, isDefault: false }, { label: "Ek Dirsek İstemiyorum", priceAdjustment: 0, isDefault: true }] },
+    { code: "kollektor", label: "Kollektör takımı ve montajı", isRequired: false, options: [{ label: "4'lü Kollektör Takım ve Montajı", priceAdjustment: 3600, isDefault: false }, { label: "5'li Kollektör Takım ve Montajı", priceAdjustment: 4080, isDefault: false }, { label: "6'lı Kollektör Takım ve Montajı", priceAdjustment: 4320, isDefault: false }, { label: "7'li Kollektör Takım ve Montajı", priceAdjustment: 5400, isDefault: false }, { label: "8'li Kollektör Takım ve Montajı", priceAdjustment: 5820, isDefault: false }, { label: "9'lu Kollektör Takım ve Montajı", priceAdjustment: 6480, isDefault: false }, { label: "10'lu Kollektör Takım ve Montajı", priceAdjustment: 7140, isDefault: false }, { label: "Kollektör İstemiyorum", priceAdjustment: 0, isDefault: true }] },
+    { code: "petek_temizligi", label: "Petek temizliği", isRequired: false, options: [{ label: "Petek Temizleme Hizmeti İstiyorum", priceAdjustment: 5500, isDefault: false }, { label: "Petek İstemiyorum", priceAdjustment: 0, isDefault: true }] },
+    { code: "selenoid_vana", label: "Selenoid vana ve montajı", isRequired: false, options: [{ label: "Selenoid Vana ve Montajı Yapılsın", priceAdjustment: 1800, isDefault: false }, { label: "İstemiyorum", priceAdjustment: 0, isDefault: true }] },
+    { code: "alarm", label: "Alarm cihazı ve montajı", isRequired: false, options: [{ label: "Alarm Cihazı ve Montajı Yapılsın", priceAdjustment: 900, isDefault: false }, { label: "İstemiyorum", priceAdjustment: 0, isDefault: true }] },
+  ],
+});
+
 export default function ProductCampaignsPage() {
   const [items, setItems] = useState<Package[]>([]),
-    [products, setProducts] = useState<Product[]>([]),
-    [form, setForm] = useState<Omit<Package, "id" | "productName">>(empty()),
+    [form, setForm] = useState<Omit<Package, "id">>(empty()),
     [editing, setEditing] = useState<number | null>(null),
     [message, setMessage] = useState("");
   const load = async () => {
-    const [list, lookups] = await Promise.all([
-      fetchApi<{ data: Package[] }>("/admin/product-campaigns"),
-      fetchApi<{ products: Product[] }>("/admin/product-campaigns/lookups"),
-    ]);
+    const list = await fetchApi<{ data: Package[] }>("/admin/product-campaigns");
     setItems(list.data ?? []);
-    setProducts(lookups.products ?? []);
   };
   useEffect(() => {
     void load().catch(() => setMessage("Paketler yüklenemedi."));
   }, []);
   const save = async () => {
     try {
-      if (!form.productId) throw new Error("Ürün seçmelisiniz.");
       await fetchApi(
         editing
           ? `/admin/product-campaigns/${editing}`
@@ -95,7 +112,7 @@ export default function ProductCampaignsPage() {
     }
   };
   const edit = (item: Package) => {
-    const { id, productName, ...data } = item;
+    const { id, ...data } = item;
     setEditing(id);
     setForm(data);
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -116,7 +133,7 @@ export default function ProductCampaignsPage() {
         <p className="text-sm text-blue-200">Kombi kampanya yapılandırması</p>
         <h1 className="mt-1 text-3xl font-bold">Montaj paketleri</h1>
         <p className="mt-2 text-sm text-slate-300">
-          Ürüne özel şehir, montaj ve ek hizmet fiyatlarını yönetin.
+          Ürün bağımsız şehir, montaj ve ek hizmet fiyatlarını yönetin. Müşteri ürün sayfasında paketi seçer.
         </p>
       </div>
       {message && (
@@ -140,24 +157,11 @@ export default function ProductCampaignsPage() {
             Yeni paket
           </Button>
         </div>
-        <div className="grid gap-3 md:grid-cols-3">
-          <label>
-            Ürün
-            <select
-              className="mt-1 h-10 w-full rounded-md border px-3"
-              value={form.productId}
-              onChange={(e) =>
-                setForm((v) => ({ ...v, productId: Number(e.target.value) }))
-              }
-            >
-              <option value={0}>Ürün seçiniz</option>
-              {products.map((p) => (
-                <option value={p.id} key={p.id}>
-                  {p.name} · {p.sku}
-                </option>
-              ))}
-            </select>
-          </label>
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4">
+          <div><b className="text-sm text-amber-950">Hazır kombi değişim lookup’ları</b><p className="mt-1 text-xs text-amber-800">Ekranınızdaki tüm seçim gruplarını, fiyat farklarıyla birlikte forma doldurur. Sonrasında istediğiniz satırı düzenleyebilirsiniz.</p></div>
+          <Button type="button" variant="outline" className="border-amber-300 bg-white" onClick={() => setForm((current) => ({ ...current, ...combiChangePreset() }))}><Sparkles className="mr-2 size-4" />Standart kombi değişimi</Button>
+        </div>
+        <div className="grid gap-3 md:grid-cols-2">
           <label>
             Başlık
             <Input
@@ -418,8 +422,7 @@ export default function ProductCampaignsPage() {
                 <div>
                   <b>{item.title}</b>
                   <p className="text-sm text-slate-500">
-                    {item.productName} ·{" "}
-                    {item.startingPrice.toLocaleString("tr-TR")} TL ·{" "}
+                    Paket bedeli: {item.startingPrice.toLocaleString("tr-TR")} TL ·{" "}
                     {item.locations.length} lokasyon · {item.groups.length}{" "}
                     hizmet alanı
                   </p>

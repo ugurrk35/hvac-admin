@@ -102,6 +102,8 @@ type Product = {
   ogImage: string;
   twitterCardType: string;
   brand: string;
+  brandLogoUrl?: string;
+  cardHighlights?: string[];
   gtin: string;
   mpn: string;
   createdAt: string;
@@ -111,6 +113,10 @@ type Product = {
   isDeleted: boolean;
   categoryId: number;
   categoryName: string;
+  additionalCategoryIds?: number[];
+  technicalDetails?: string;
+  deliveryInstallationDetails?: string;
+  documentsDetails?: string;
   productImages: ProductImage[];
   productTags: ProductTag[];
   attributeCombinations: AttributeCombination[];
@@ -215,7 +221,10 @@ export default function EditProductPage({
     quantity: 0,
     isPublished: true,
     categoryId: 1,
+    additionalCategoryIds: [] as number[],
     brand: "",
+    brandLogoUrl: "",
+    cardHighlights: [] as string[],
     gtin: "",
     mpn: "",
     metaTitle: "",
@@ -226,6 +235,9 @@ export default function EditProductPage({
     ogDescription: "",
     ogImage: "",
     twitterCardType: "",
+    technicalDetails: "",
+    deliveryInstallationDetails: "",
+    documentsDetails: "",
   });
 
   // --- Image Management Functions ---
@@ -530,7 +542,10 @@ export default function EditProductPage({
             quantity: productData.quantity,
             isPublished: productData.isPublished,
             categoryId: productData.categoryId,
+            additionalCategoryIds: productData.additionalCategoryIds ?? [],
             brand: productData.brand,
+            brandLogoUrl: productData.brandLogoUrl ?? "",
+            cardHighlights: productData.cardHighlights ?? [],
             gtin: productData.gtin,
             mpn: productData.mpn,
             metaTitle: productData.metaTitle,
@@ -541,6 +556,10 @@ export default function EditProductPage({
             ogDescription: productData.ogDescription,
             ogImage: productData.ogImage,
             twitterCardType: productData.twitterCardType,
+            technicalDetails: productData.technicalDetails ?? "",
+            deliveryInstallationDetails:
+              productData.deliveryInstallationDetails ?? "",
+            documentsDetails: productData.documentsDetails ?? "",
           });
           if (
             productData.productImages &&
@@ -857,6 +876,33 @@ export default function EditProductPage({
               </div>
             </div>
             <div className="space-y-2">
+              <Label>Ek vitrin kategorileri</Label>
+              <p className="text-xs text-muted-foreground">
+                Ana kategori korunur. Ürün, seçilen diğer kategorilerde de listelenir.
+              </p>
+              <div className="grid gap-2 rounded-lg border p-3 sm:grid-cols-2">
+                {categories
+                  .filter((category) => category.id !== formData.categoryId)
+                  .map((category) => (
+                    <label className="flex items-center gap-2 text-sm" key={category.id}>
+                      <input
+                        type="checkbox"
+                        checked={formData.additionalCategoryIds.includes(category.id)}
+                        onChange={(event) =>
+                          setFormData((current) => ({
+                            ...current,
+                            additionalCategoryIds: event.target.checked
+                              ? [...current.additionalCategoryIds, category.id]
+                              : current.additionalCategoryIds.filter((item) => item !== category.id),
+                          }))
+                        }
+                      />
+                      {category.name}
+                    </label>
+                  ))}
+              </div>
+            </div>
+            <div className="space-y-2">
               <Label htmlFor="shortDescription">Kısa Açıklama</Label>
               <div className="min-h-[150px] border rounded-md border-input">
                 <RichTextEditor
@@ -881,7 +927,21 @@ export default function EditProductPage({
                 />
               </div>
             </div>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid gap-4 lg:grid-cols-3">
+              <div className="space-y-2">
+                <Label htmlFor="technicalDetails">Teknik bilgiler sekmesi</Label>
+                <Textarea id="technicalDetails" name="technicalDetails" value={formData.technicalDetails} onChange={handleInputChange} rows={7} placeholder="Ürüne özel teknik bilgiler" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="deliveryInstallationDetails">Teslimat & montaj sekmesi</Label>
+                <Textarea id="deliveryInstallationDetails" name="deliveryInstallationDetails" value={formData.deliveryInstallationDetails} onChange={handleInputChange} rows={7} placeholder="Teslimat ve montaj koşulları" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="documentsDetails">Dokümanlar sekmesi</Label>
+                <Textarea id="documentsDetails" name="documentsDetails" value={formData.documentsDetails} onChange={handleInputChange} rows={7} placeholder="Kılavuz, garanti ve doküman açıklamaları" />
+              </div>
+            </div>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               <div className="space-y-2">
                 <Label htmlFor="basePrice">Taban Fiyat *</Label>
                 <Input
@@ -952,6 +1012,16 @@ export default function EditProductPage({
                   onChange={handleInputChange}
                   className="border-palette-lightBlue"
                 />
+              </div>
+            </div>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="brandLogoUrl">Marka logo URL</Label>
+                <Input id="brandLogoUrl" name="brandLogoUrl" value={formData.brandLogoUrl} onChange={handleInputChange} placeholder="https://.../marka-logo.png" className="border-palette-lightBlue" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="cardHighlights">Ürün kartı kısa maddeleri</Label>
+                <Textarea id="cardHighlights" value={formData.cardHighlights.join("\n")} onChange={(event) => setFormData((current) => ({ ...current, cardHighlights: event.target.value.split("\n").map((item) => item.trim()).filter(Boolean).slice(0, 3) }))} placeholder={"Her satıra bir fayda yazın\nEn fazla 3 madde gösterilir"} rows={3} />
               </div>
             </div>
             <div className="flex items-center space-x-2">

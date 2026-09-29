@@ -64,6 +64,7 @@ export default function AddProductPage() {
     isPublished: true,
     quantity: 0,
     categoryId: 0,
+    additionalCategoryIds: [] as number[],
   })
 
   // SEO State
@@ -85,8 +86,13 @@ export default function AddProductPage() {
   // Product Info State
   const [productInfo, setProductInfo] = useState({
     brand: "",
+    brandLogoUrl: "",
+    cardHighlights: [] as string[],
     gtin: "",
     mpn: "",
+    technicalDetails: "",
+    deliveryInstallationDetails: "",
+    documentsDetails: "",
   })
 
   // Images State - Yeni yapı ile API entegrasyonu
@@ -661,6 +667,19 @@ const isValidCategory = (cat: unknown): cat is LookupCategory => {
             </div>
 
             <div className="space-y-2">
+              <Label>Ek vitrin kategorileri</Label>
+              <p className="text-xs text-muted-foreground">Ana kategori korunur. Ürün, seçtiğiniz ek vitrin kategorilerinde de listelenir.</p>
+              <div className="grid gap-2 rounded-lg border p-3 sm:grid-cols-2">
+                {categories.filter((category) => category.id !== basicInfo.categoryId).map((category) => (
+                  <label className="flex items-center gap-2 text-sm" key={category.id}>
+                    <input type="checkbox" checked={basicInfo.additionalCategoryIds.includes(category.id)} onChange={(event) => setBasicInfo((current) => ({ ...current, additionalCategoryIds: event.target.checked ? [...current.additionalCategoryIds, category.id] : current.additionalCategoryIds.filter((id) => id !== category.id) }))} />
+                    {category.name}
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-2">
               <Label htmlFor="slug">SEO URL</Label>
               <Input
                 id="slug"
@@ -956,6 +975,15 @@ const isValidCategory = (cat: unknown): cat is LookupCategory => {
             </div>
 
             <div className="space-y-2">
+              <Label htmlFor="brandLogoUrl">Marka logo URL</Label>
+              <Input id="brandLogoUrl" value={productInfo.brandLogoUrl} onChange={(e) => setProductInfo((prev) => ({ ...prev, brandLogoUrl: e.target.value }))} placeholder="https://.../marka-logo.png" className="border-palette-lightBlue" />
+              <p className="text-xs text-muted-foreground">Kartta marka adının yerine bu logo gösterilir.</p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="cardHighlights">Ürün kartı kısa maddeleri</Label>
+              <Textarea id="cardHighlights" value={productInfo.cardHighlights.join("\n")} onChange={(e) => setProductInfo((prev) => ({ ...prev, cardHighlights: e.target.value.split("\n").map((item) => item.trim()).filter(Boolean).slice(0, 3) }))} placeholder={"Her satıra bir fayda yazın\nEn fazla 3 madde gösterilir"} rows={5} />
+            </div>
+            <div className="space-y-2">
               <Label htmlFor="gtin">GTIN</Label>
               <Input
                 id="gtin"
@@ -974,6 +1002,9 @@ const isValidCategory = (cat: unknown): cat is LookupCategory => {
                 className="border-palette-lightBlue"
               />
             </div>
+            <div className="space-y-2"><Label htmlFor="technicalDetails">Teknik bilgiler sekmesi</Label><Textarea id="technicalDetails" value={productInfo.technicalDetails} onChange={(e) => setProductInfo((prev) => ({ ...prev, technicalDetails: e.target.value }))} placeholder="Kapasite, verimlilik, ölçü ve diğer ürün teknik bilgileri" /></div>
+            <div className="space-y-2"><Label htmlFor="deliveryInstallationDetails">Teslimat & montaj sekmesi</Label><Textarea id="deliveryInstallationDetails" value={productInfo.deliveryInstallationDetails} onChange={(e) => setProductInfo((prev) => ({ ...prev, deliveryInstallationDetails: e.target.value }))} placeholder="Bu ürüne özel teslimat, montaj ve uygunluk koşulları" /></div>
+            <div className="space-y-2"><Label htmlFor="documentsDetails">Dokümanlar sekmesi</Label><Textarea id="documentsDetails" value={productInfo.documentsDetails} onChange={(e) => setProductInfo((prev) => ({ ...prev, documentsDetails: e.target.value }))} placeholder="Garanti, katalog veya dokümanlar için açıklama" /></div>
           </div>
         )
 

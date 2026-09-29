@@ -256,6 +256,12 @@ export interface Product {
   quantity: number
   isPublished: boolean
   categoryId: number
+  additionalCategoryIds?: number[]
+  technicalDetails?: string
+  brandLogoUrl?: string
+  cardHighlights?: string[]
+  deliveryInstallationDetails?: string
+  documentsDetails?: string
   brand: string
   gtin: string
   mpn: string
@@ -434,6 +440,7 @@ export interface ProductListItemNew {
   brand: string
   createdAt: string
   categoryId: number
+  additionalCategoryIds?: number[]
   categoryName: string
   mainImageUrl: string | null
   tagNames: string[]
@@ -570,6 +577,11 @@ export interface CreateProductPayloadNew {
   brand?: string
   gtin?: string
   mpn?: string
+  technicalDetails?: string
+  brandLogoUrl?: string
+  cardHighlights?: string[]
+  deliveryInstallationDetails?: string
+  documentsDetails?: string
 
   // Tags
   productTagIds?: number[] | null
