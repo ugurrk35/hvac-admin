@@ -114,6 +114,7 @@ type Product = {
   categoryId: number;
   categoryName: string;
   additionalCategoryIds?: number[];
+  campaignPackageIds?: number[];
   technicalDetails?: string;
   deliveryInstallationDetails?: string;
   documentsDetails?: string;
@@ -124,6 +125,7 @@ type Product = {
 };
 type TabType = "basics" | "seo" | "images" | "attributes" | "preview";
 type Category = { id: number; name: string };
+type CampaignPackage = { id: number; title: string; isActive: boolean };
 type UploadedImage = {
   id: number;
   file?: File;
@@ -186,6 +188,7 @@ export default function EditProductPage({
   const [fetchLoading, setFetchLoading] = useState(true);
   const [, setProduct] = useState<Product | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [campaignPackages, setCampaignPackages] = useState<CampaignPackage[]>([]);
   const [categoriesLoading, setCategoriesLoading] = useState(true);
   const [images, setImages] = useState<UploadedImage[]>([]);
   const [mainImageId, setMainImageId] = useState<number | null>(null);
@@ -222,6 +225,7 @@ export default function EditProductPage({
     isPublished: true,
     categoryId: 1,
     additionalCategoryIds: [] as number[],
+    campaignPackageIds: [] as number[],
     brand: "",
     brandLogoUrl: "",
     cardHighlights: [] as string[],
@@ -239,6 +243,12 @@ export default function EditProductPage({
     deliveryInstallationDetails: "",
     documentsDetails: "",
   });
+
+  useEffect(() => {
+    void fetchApi<{ data: CampaignPackage[] }>("/admin/product-campaigns")
+      .then((response) => setCampaignPackages((response.data ?? []).filter((item) => item.isActive)))
+      .catch(() => setCampaignPackages([]));
+  }, []);
 
   // --- Image Management Functions ---
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -543,6 +553,7 @@ export default function EditProductPage({
             isPublished: productData.isPublished,
             categoryId: productData.categoryId,
             additionalCategoryIds: productData.additionalCategoryIds ?? [],
+            campaignPackageIds: productData.campaignPackageIds ?? [],
             brand: productData.brand,
             brandLogoUrl: productData.brandLogoUrl ?? "",
             cardHighlights: productData.cardHighlights ?? [],
@@ -900,6 +911,14 @@ export default function EditProductPage({
                       {category.name}
                     </label>
                   ))}
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Bu üründe kullanılacak montaj paketleri</Label>
+              <p className="text-xs text-muted-foreground">Paketler global tanımlıdır; bu üründe görünecekleri buradan seçin.</p>
+              <div className="grid gap-2 rounded-lg border p-3 sm:grid-cols-2">
+                {campaignPackages.map((item) => <label className="flex items-center gap-2 text-sm" key={item.id}><input type="checkbox" checked={formData.campaignPackageIds.includes(item.id)} onChange={(event) => setFormData((current) => ({ ...current, campaignPackageIds: event.target.checked ? [...current.campaignPackageIds, item.id] : current.campaignPackageIds.filter((id) => id !== item.id) }))} />{item.title}</label>)}
+                {!campaignPackages.length && <p className="text-sm text-muted-foreground">Önce Montaj Paketleri ekranından aktif paket oluşturun.</p>}
               </div>
             </div>
             <div className="space-y-2">
