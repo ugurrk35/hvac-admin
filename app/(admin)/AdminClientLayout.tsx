@@ -191,6 +191,11 @@ const menuItems = [
         icon: Settings,
       },
       {
+        title: "Ana Sayfa Vitrinleri",
+        href: "/settings/home-collections",
+        icon: Settings,
+      },
+      {
         title: "Home - Featured",
         href: "/settings/home-featured",
         icon: Settings,
