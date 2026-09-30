@@ -288,9 +288,9 @@ export default function AdminClientLayout({
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="flex h-16 items-center gap-2 border-b border-palette-lightBlue px-6">
-          <Package className="h-6 w-6 text-palette-blue" />
-          <span className="font-semibold text-palette-blue">Admin Panel</span>
+        <div className="flex h-16 items-center gap-2 border-b border-palette-lightBlue px-5">
+          <img className="h-9 w-9 object-contain" src="/icon.png" alt="" />
+          <span className="grid leading-none text-palette-blue"><b className="text-sm font-bold">Kombi Klima</b><small className="mt-1 text-[9px] font-black tracking-[.2em] text-cyan-600">BURADA</small></span>
         </div>
         <nav className="min-h-0 flex-1 space-y-1 overflow-y-auto p-4">
           {menuItems.map((item) => (
@@ -390,8 +390,7 @@ export default function AdminClientLayout({
         <footer className="border-t border-palette-lightBlue">
           <div className="px-6 py-4">
             <p className="text-center text-sm text-palette-blue">
-              © 2026 E-commerce Admin Panel. All rights
-              reserved.
+              © 2026 Kombi Klima Burada · Yönetim Paneli
             </p>
           </div>
         </footer>

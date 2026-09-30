@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Package2 } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useAuth } from "@/lib/hooks/useAuth"
 import { User } from "@/lib/types"
@@ -69,9 +68,9 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-palette-lightBlue via-palette-pink to-palette-lavender">
       <div className="w-full max-w-md p-6 bg-white/90 backdrop-blur-sm rounded-lg shadow-lg">
         <div className="flex flex-col items-center space-y-2 mb-6">
-          <Package2 className="h-12 w-12 text-palette-blue" />
-          <h1 className="text-2xl font-bold text-palette-blue">Admin Panel</h1>
-          <p className="text-muted-foreground">Hesabınıza giriş yapın</p>
+          <img className="h-16 w-16 object-contain" src="/icon.png" alt="Kombi Klima Burada" />
+          <h1 className="text-2xl font-bold text-palette-blue">Kombi Klima Burada</h1>
+          <p className="text-muted-foreground">Yönetim paneline giriş yapın</p>
         </div>
 
         {error && (
