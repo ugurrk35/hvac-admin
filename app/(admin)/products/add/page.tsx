@@ -29,9 +29,10 @@ import type {
   ProductImage,
 } from "@/lib/types"
 import type { ProductListItemNew } from "@/lib/types"
-import { lookupApi, productsApi, imagesApi, productTagApi } from "@/lib/api"
+import { lookupApi, productsApi, imagesApi, productTagApi, fetchApi } from "@/lib/api"
 
 type TabType = "basics" | "seo" | "social" | "product-info" | "tags" | "images" | "attributes"
+type CampaignPackage = { id: number; title: string; isActive: boolean }
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL
 if (!API_BASE_URL) throw new Error("NEXT_PUBLIC_API_URL tanımlı değil.")
@@ -46,6 +47,7 @@ export default function AddProductPage() {
   const [categories, setCategories] = useState<LookupCategory[]>([])
   const [productAttributes, setProductAttributes] = useState<LookupProductAttribute[]>([])
   const [attributeValues, setAttributeValues] = useState<Record<string, LookupProductAttributeValue[]>>({})
+  const [campaignPackages, setCampaignPackages] = useState<CampaignPackage[]>([])
 
   // ProductTag data
   const [newTagName, setNewTagName] = useState("")
@@ -65,6 +67,7 @@ export default function AddProductPage() {
     quantity: 0,
     categoryId: 0,
     additionalCategoryIds: [] as number[],
+    campaignPackageIds: [] as number[],
   })
 
   // SEO State
@@ -231,6 +234,12 @@ const isValidCategory = (cat: unknown): cat is LookupCategory => {
     }
 
     loadLookupData()
+  }, [])
+
+  useEffect(() => {
+    void fetchApi<{ data: CampaignPackage[] }>("/admin/product-campaigns")
+      .then((response) => setCampaignPackages((response.data ?? []).filter((item) => item.isActive)))
+      .catch(() => setCampaignPackages([]))
   }, [])
 
   // Yeni etiket oluştur
@@ -676,6 +685,31 @@ const isValidCategory = (cat: unknown): cat is LookupCategory => {
                     {category.name}
                   </label>
                 ))}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Bu üründe kullanılacak montaj paketleri</Label>
+              <p className="text-xs text-muted-foreground">Paketler global olarak Montaj Paketleri ekranında tanımlanır. Bu ürün için kullanılacak paketleri buradan seçin.</p>
+              <div className="grid gap-2 rounded-lg border p-3 sm:grid-cols-2">
+                {campaignPackages.map((item) => (
+                  <label className="flex items-center gap-2 text-sm" key={item.id}>
+                    <input
+                      type="checkbox"
+                      checked={basicInfo.campaignPackageIds.includes(item.id)}
+                      onChange={(event) => setBasicInfo((current) => ({
+                        ...current,
+                        campaignPackageIds: event.target.checked
+                          ? [...current.campaignPackageIds, item.id]
+                          : current.campaignPackageIds.filter((id) => id !== item.id),
+                      }))}
+                    />
+                    {item.title}
+                  </label>
+                ))}
+                {!campaignPackages.length && (
+                  <p className="text-sm text-muted-foreground sm:col-span-2">Önce Montaj Paketleri ekranından aktif paket oluşturun.</p>
+                )}
               </div>
             </div>
 
