@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import RichTextEditor from "@/components/RichTextEditor"
+import { ProductContentEditors } from "@/components/ProductContentEditors"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ImagePlus, X, ChevronRight, ChevronLeft, Plus, Trash2, Loader2, Tag } from "lucide-react"
 import { Switch } from "@/components/ui/switch"
@@ -1036,9 +1037,7 @@ const isValidCategory = (cat: unknown): cat is LookupCategory => {
                 className="border-palette-lightBlue"
               />
             </div>
-            <div className="space-y-2"><Label htmlFor="technicalDetails">Teknik bilgiler sekmesi</Label><Textarea id="technicalDetails" value={productInfo.technicalDetails} onChange={(e) => setProductInfo((prev) => ({ ...prev, technicalDetails: e.target.value }))} placeholder="Kapasite, verimlilik, ölçü ve diğer ürün teknik bilgileri" /></div>
-            <div className="space-y-2"><Label htmlFor="deliveryInstallationDetails">Teslimat & montaj sekmesi</Label><Textarea id="deliveryInstallationDetails" value={productInfo.deliveryInstallationDetails} onChange={(e) => setProductInfo((prev) => ({ ...prev, deliveryInstallationDetails: e.target.value }))} placeholder="Bu ürüne özel teslimat, montaj ve uygunluk koşulları" /></div>
-            <div className="space-y-2"><Label htmlFor="documentsDetails">Dokümanlar sekmesi</Label><Textarea id="documentsDetails" value={productInfo.documentsDetails} onChange={(e) => setProductInfo((prev) => ({ ...prev, documentsDetails: e.target.value }))} placeholder="Garanti, katalog veya dokümanlar için açıklama" /></div>
+            <ProductContentEditors value={productInfo} onChange={(next) => setProductInfo((prev) => ({ ...prev, ...next }))} />
           </div>
         )
 

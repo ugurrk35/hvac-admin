@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import RichTextEditor from "@/components/RichTextEditor";
+import { ProductContentEditors } from "@/components/ProductContentEditors";
 import {
   Select,
   SelectContent,
@@ -946,20 +947,7 @@ export default function EditProductPage({
                 />
               </div>
             </div>
-            <div className="grid gap-4 lg:grid-cols-3">
-              <div className="space-y-2">
-                <Label htmlFor="technicalDetails">Teknik bilgiler sekmesi</Label>
-                <Textarea id="technicalDetails" name="technicalDetails" value={formData.technicalDetails} onChange={handleInputChange} rows={7} placeholder="Ürüne özel teknik bilgiler" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="deliveryInstallationDetails">Teslimat & montaj sekmesi</Label>
-                <Textarea id="deliveryInstallationDetails" name="deliveryInstallationDetails" value={formData.deliveryInstallationDetails} onChange={handleInputChange} rows={7} placeholder="Teslimat ve montaj koşulları" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="documentsDetails">Dokümanlar sekmesi</Label>
-                <Textarea id="documentsDetails" name="documentsDetails" value={formData.documentsDetails} onChange={handleInputChange} rows={7} placeholder="Kılavuz, garanti ve doküman açıklamaları" />
-              </div>
-            </div>
+            <ProductContentEditors value={formData} onChange={(next) => setFormData((prev) => ({ ...prev, ...next }))} />
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               <div className="space-y-2">
                 <Label htmlFor="basePrice">Taban Fiyat *</Label>

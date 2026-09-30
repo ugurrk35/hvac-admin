@@ -186,6 +186,11 @@ const menuItems = [
         icon: Settings,
       },
       {
+        title: "Home - Hero",
+        href: "/settings/home-hero",
+        icon: Settings,
+      },
+      {
         title: "Home - Featured",
         href: "/settings/home-featured",
         icon: Settings,
