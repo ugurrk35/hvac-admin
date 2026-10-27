@@ -64,6 +64,7 @@ export default function AddProductPage() {
     description: "",
     basePrice: 0.01,
     discountPrice: 0.01,
+    campaignStartingPrice: 0,
     isPublished: true,
     quantity: 0,
     categoryId: 0,
@@ -844,7 +845,7 @@ const isValidCategory = (cat: unknown): cat is LookupCategory => {
               )}
             </div>
 
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-4 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="basePrice">Temel Fiyat</Label>
                 <Input
@@ -870,6 +871,12 @@ const isValidCategory = (cat: unknown): cat is LookupCategory => {
                   onChange={(e) => setBasicInfo((prev) => ({ ...prev, discountPrice: Number(e.target.value) }))}
                   className="border-palette-lightBlue"
                 />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="campaignStartingPrice">Kampanyalı Başlangıç Fiyatı</Label>
+                <Input id="campaignStartingPrice" type="number" step="0.01" min="0" value={basicInfo.campaignStartingPrice} onChange={(e) => setBasicInfo((prev) => ({ ...prev, campaignStartingPrice: Number(e.target.value) }))} className="border-palette-lightBlue" />
+                <p className="text-xs text-muted-foreground">0 bırakılırsa montaj paketinin varsayılan fiyatı kullanılır.</p>
               </div>
 
               <div className="space-y-2">

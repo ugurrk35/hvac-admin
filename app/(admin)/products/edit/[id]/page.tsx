@@ -90,6 +90,7 @@ type Product = {
   description: string;
   basePrice: number;
   discountPrice: number;
+  campaignStartingPrice?: number | null;
   effectivePrice: number;
   isPublished: boolean;
   quantity: number;
@@ -222,6 +223,7 @@ export default function EditProductPage({
     description: "",
     basePrice: 0,
     discountPrice: 0,
+    campaignStartingPrice: 0,
     quantity: 0,
     isPublished: true,
     categoryId: 1,
@@ -550,6 +552,7 @@ export default function EditProductPage({
             description: productData.description,
             basePrice: productData.basePrice,
             discountPrice: productData.discountPrice,
+            campaignStartingPrice: productData.campaignStartingPrice ?? 0,
             quantity: productData.quantity,
             isPublished: productData.isPublished,
             categoryId: productData.categoryId,
@@ -975,6 +978,11 @@ export default function EditProductPage({
                   onChange={handleInputChange}
                   className="border-palette-lightBlue"
                 />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="campaignStartingPrice">Kampanyalı Başlangıç Fiyatı</Label>
+                <Input id="campaignStartingPrice" name="campaignStartingPrice" type="number" step="0.01" min="0" value={formData.campaignStartingPrice} onChange={handleInputChange} className="border-palette-lightBlue" />
+                <p className="text-xs text-muted-foreground">0 ise montaj paketinin varsayılan fiyatı kullanılır.</p>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="quantity">Stok Miktarı</Label>
